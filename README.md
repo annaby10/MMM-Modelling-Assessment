@@ -1,126 +1,91 @@
-# MMM-Modelling-Assessment
-project:
-  title: "Marketing Revenue Modeling (Weekly Data)"
-  description: >
-    This project implements a two-stage, causally-aware marketing mix model (MMM) 
-    for weekly revenue data. The model quantifies the effect of marketing channels, 
-    owned channels, pricing, and promotions on revenue, providing actionable 
-    insights for marketing strategy.
+# Marketing Revenue Modeling (Weekly Data)
 
-repository_structure:
-  - folder: "notebook"
-    content: "Marketing_Revenue_Modeling.ipynb (Final polished notebook)"
-  - folder: "data"
-    content: "Assessment 2 - MMM Weekly.csv (Dataset)"
-  - folder: "output"
-    content: 
-      - "stage1_google_model.joblib"
-      - "stage2_revenue_model.joblib"
-      - "stage2_final_coefficients.csv"
-      - "stage2_cv_metrics.csv"
-      - "residual_plot.png"
-      - "sensitivity_plots.png"
-  - file: "README.md (This file)"
-  - file: "requirements.txt (Python dependencies)"
+This project implements a **two-stage, causally-aware Marketing Mix Model (MMM)** to quantify the effects of marketing channels, pricing, promotions, and owned channels on weekly revenue. The goal is to provide actionable insights for marketing strategy.
 
-environment_setup:
-  python_version: ">=3.10"
-  installation: |
-    pip install -r requirements.txt
-  dataset_instructions: |
-    Place 'Assessment 2 - MMM Weekly.csv' in the 'data/' folder or upload it in Colab.
-  notebook_config: |
-    Set DATA_PATH variable in the notebook:
-    DATA_PATH = 'data/Assessment 2 - MMM Weekly.csv'
-  outputs: |
-    All outputs are saved in 'output/' folder:
-      - Trained models (.joblib)
-      - Stage 2 coefficients and CV metrics (.csv)
-      - Residual and sensitivity plots (.png)
+---
 
-notebook_overview:
-  data_preparation:
-    description: >
-      Handles weekly seasonality using Fourier features, adds linear trend, 
-      fills zeros for missing spend periods, and creates lagged features for 
-      email/SMS campaigns.
-    transformations: 
-      - Adstock + Saturation for media channels (diminishing returns)
-      - Log-transform for price
-      - Binary flag for promotions
-  stage1_mediator_model:
-    description: >
-      Predicts Google spend as a function of social media channels (Facebook, TikTok, Snapchat).
-      Captures the causal pathway: Social → Google → Revenue.
-    model: ElasticNetCV with cross-validation
-  stage2_outcome_model:
-    description: >
-      Predicts Revenue using predicted Google spend, social channels, owned channels, 
-      price, promotions, and trend/seasonality features.
-    model: ElasticNetCV
-    validation: TimeSeriesSplit to ensure proper out-of-sample performance
-  diagnostics:
-    description: >
-      Checks model performance, residuals, and stability over time.
-    plots: 
-      - Residual scatter plot
-      - Residuals over time
-      - Actual vs predicted revenue
-  sensitivity_analysis:
-    features: [log_price, promo_flag]
-    purpose: >
-      Examines how revenue changes with variations in average price (price elasticity)
-      and promotion (promo lift)
+## Environment Setup
 
-key_findings:
-  revenue_drivers:
-    - Google spend: largest direct impact
-    - Social media: acts as a demand stimulator (mediated through Google)
-    - Price: negative effect (higher price → lower revenue)
-    - Promotions: positive lift on revenue
-    - Owned channels: small but positive lagged effect (email/SMS)
-  tradeoffs:
-    - Diminishing returns for higher ad spend
-    - Need to balance spend between social and search channels
-    - Price vs. demand trade-offs
-  model_performance:
-    metrics: 
-      - RMSE
-      - MAE
-      - R²
-    notes: >
-      Rolling CV shows good out-of-sample fit. Residuals show no systematic patterns.
-  recommendations:
-    marketing_allocation: >
-      Focus on channels with direct and mediated revenue impact. Use sensitivity analysis 
-      for weekly budget adjustments.
-    pricing_promotions: >
-      Avoid large price increases without value messaging. Schedule promotions to maximize lift.
-    monitoring: >
-      Track residuals and metrics weekly. Update model every 6-12 months to maintain accuracy.
+1. **Python Version**: 3.10+  
+2. **Install required packages**:
 
-reproducibility:
-  description: >
-    All results are deterministic (RANDOM_STATE=42) and reproducible. 
-    Notebook runs sequentially, outputs saved to 'output/' folder.
+```bash
+pip install -r requirements.txt
+DATA_PATH = 'data/Assessment 2 - MMM Weekly.csv'
+Notebook Overview
 
-evaluation_criteria_addressed:
-  technical_rigor:
-    - Proper preprocessing and feature engineering
-    - Time-series cross-validation
-    - Handling zero spend periods and sparsity
-  causal_awareness:
-    - Google-as-mediator explicitly modeled in stage 1
-  interpretability:
-    - Coefficients, residuals, and sensitivity analysis provide actionable insights
-  product_thinking:
-    - Recommendations and trade-offs are practical for marketing strategy
-  reproducibility_craft:
-    - Clean notebook and repository
-    - Environment instructions provided
-    - Deterministic results
+The notebook is organized into the following sections:
 
-author:
-  name: "Your Name"
-  email: "your.email@example.com"
-  notes: "For questions or clarifications, contact the author."
+1. Title & Instructions
+
+Provides project title, purpose, and instructions to run in Google Colab or Jupyter.
+Explains dataset upload and path configuration.
+
+2. Environment & Imports
+
+Imports necessary Python libraries (pandas, numpy, sklearn, matplotlib, seaborn, etc.).
+Sets a random seed for reproducibility.
+
+3. Configuration
+
+Defines column names from the dataset for revenue, channels, price, promotions, and followers.
+Sets output directory for saving models, metrics, and plots.
+
+4. Data Loading
+
+Loads the CSV dataset into a DataFrame and displays the first few rows.
+
+5. Preprocessing & Time Features
+
+Prepares a linear time index.
+Handles weekly seasonality using Fourier features.
+Ensures missing and zero values are handled appropriately.
+
+6. Media Transformations
+
+Applies adstock to social and Google spend to capture lagged effects.
+Applies saturation functions (log or hill) to capture diminishing returns.
+
+7. Price, Promotions & Owned Channels
+
+Log-transform for price.
+Binary flag for promotions.
+Lagged variables for email and SMS campaigns.
+
+8. Target Transformation
+
+Applies log1p transformation to revenue to stabilize variance.
+
+9. Stage 1: Mediator Model
+
+Predicts Google spend using social media channels as inputs.
+Saves predicted Google spend (google_hat) for use in Stage 2.
+Causal perspective: Social → Google → Revenue.
+
+10. Stage 2: Outcome Model
+
+Predicts revenue using predicted Google spend, social channels, price, promotions, owned channels, and trend/seasonality.
+Uses ElasticNet regression with TimeSeriesSplit cross-validation.
+Outputs final coefficients and CV metrics, saved to output/.
+
+11. Diagnostics
+
+Residual plots: scatter plot and residuals over time.
+Checks model fit and identifies potential issues.
+
+12. Sensitivity Analysis
+
+Simulates revenue changes for variations in average price (price elasticity).
+Simulates revenue changes for promotion on/off (promotion lift).
+Provides actionable insights for marketing trade-offs.
+
+13. Insights & Recommendations
+
+Identifies key revenue drivers: Google spend, price, promotions, and owned channels.
+Highlights diminishing returns for high ad spend.
+Suggests trade-offs between social vs. search channels.
+Provides practical recommendations for marketing allocation decisions.
+
+
+
+
