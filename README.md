@@ -4,18 +4,9 @@ This project implements a **two-stage, causally-aware Marketing Mix Model (MMM)*
 
 ---
 
-## Environment Setup
-
-1. **Python Version**: 3.10+  
-2. **Install required packages**:
-
-```bash
-pip install -r requirements.txt
-DATA_PATH = 'data/Assessment 2 - MMM Weekly.csv'
-Notebook Overview
+# Notebook Overview
 
 The notebook is organized into the following sections:
-
 1. Title & Instructions
 
 Provides project title, purpose, and instructions to run in Google Colab or Jupyter.
@@ -87,5 +78,13 @@ Suggests trade-offs between social vs. search channels.
 Provides practical recommendations for marketing allocation decisions.
 
 
+---
 
+## Environment Setup
 
+1. **Python Version**: 3.10+  
+2. **Install required packages**:
+
+```bash
+pip install -r requirements.txt
+DATA_PATH = 'data/Assessment 2 - MMM Weekly.csv'
